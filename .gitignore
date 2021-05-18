@@ -1,0 +1,9 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+*/.bsb/*
+
+.idea/*
+target/*
+**/target/**
+*/.idea/*
