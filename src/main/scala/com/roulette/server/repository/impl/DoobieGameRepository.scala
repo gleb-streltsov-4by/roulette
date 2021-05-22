@@ -13,8 +13,9 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(
 
   private implicit val uuidMeta: Meta[UUID] = Meta[String].timap(UUID.fromString)(_.toString)
 
-  private val games: Fragment = fr"SELECT id, min_bet, max_bet, status FROM games"
+  private val games: Fragment = fr"SELECT id, min_bet_amount, max_bet_amount FROM games"
 
   override def findAvailableGames: F[List[Game]] =
-    (games ++ fr"WHERE status = 'BETS_SUBMISSION'").query[Game].to[List].transact(tx)
+    games.query[Game].to[List].transact(tx)
+    //(games ++ fr"WHERE status = 'BETS_SUBMISSION'").query[Game].to[List].transact(tx)
 }

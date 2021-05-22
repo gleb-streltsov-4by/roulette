@@ -2,11 +2,9 @@ package com.roulette.server.domain
 
 import enumeratum.{Enum, EnumEntry}
 
-import java.util.UUID
-
 object game {
 
-  final case class Game(gameId: UUID,
+  final case class Game(id: Int,
                         minBetAmount: Int,
                         maxBetAmount: Int)
 
@@ -28,9 +26,9 @@ object game {
     }
   }
 
-  final case class Bet(id: UUID,
-                       playerId: UUID,
-                       gameId: UUID,
+  final case class Bet(id: Int,
+                       playerId: Int,
+                       gameId: Int,
                        amount: Int,
                        combination: RouletteCombination)
 

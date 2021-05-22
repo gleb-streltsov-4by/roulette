@@ -66,7 +66,10 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "eu.timepit" %% "refined" % "0.9.21",
   "com.beachape" %% "enumeratum" % enumeratumVersion,
-  "io.scalaland" %% "chimney" % dtoMapperChimneyVersion
+  "io.scalaland" %% "chimney" % dtoMapperChimneyVersion,
+  "com.github.pureconfig" %% "pureconfig" % "0.14.0",
+  "org.flywaydb" % "flyway-core" % "6.2.4",
+  "org.postgresql" % "postgresql" % "42.2.6"
 )
 
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)

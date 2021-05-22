@@ -2,17 +2,15 @@ package com.roulette.server.dto
 
 import io.circe.generic.JsonCodec
 
-import java.util.UUID
-
 object game {
 
-  @JsonCodec final case class GameDto(gameId: UUID,
+  @JsonCodec final case class GameDto(id: Int,
                                       minBetAmount: Int,
                                       maxBetAmount: Int)
 
-  @JsonCodec final case class BetDto(id: UUID,
-                                     playerId: UUID,
-                                     gameId: UUID,
+  @JsonCodec final case class BetDto(id: Int,
+                                     playerId: Int,
+                                     gameId: Int,
                                      amount: Int,
                                      combination: RouletteCombinationDto)
 
