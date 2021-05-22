@@ -1,6 +1,6 @@
 package com.roulette.server.repository.impl
 
-import cats.effect.Bracket
+import cats.effect.{Bracket, Sync}
 import com.roulette.server.domain.game.Game
 import com.roulette.server.repository.GameRepository
 import doobie.{Fragment, Meta, Transactor}
@@ -8,7 +8,7 @@ import doobie.implicits._
 
 import java.util.UUID
 
-class DoobieGameRepository[F[_]](tx: Transactor[F])(
+class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(
   implicit ev: Bracket[F, Throwable]) extends GameRepository[F] {
 
   private implicit val uuidMeta: Meta[UUID] = Meta[String].timap(UUID.fromString)(_.toString)

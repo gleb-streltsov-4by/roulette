@@ -3,7 +3,7 @@ name := "roulette-server"
 
 version := "0.1"
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.4"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -28,6 +28,8 @@ val catsScalacheckVersion = "0.2.0"
 val log4CatsVersion = "1.1.1"
 val scalaTestVersion = "3.1.0.0-RC2"
 val h2Version = "1.4.200"
+val enumeratumVersion = "1.6.1"
+val dtoMapperChimneyVersion = "0.6.1"
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
@@ -62,5 +64,9 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.200",
   "eu.timepit" %% "refined" % "0.9.17",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
-  "eu.timepit" %% "refined" % "0.9.21"
+  "eu.timepit" %% "refined" % "0.9.21",
+  "com.beachape" %% "enumeratum" % enumeratumVersion,
+  "io.scalaland" %% "chimney" % dtoMapperChimneyVersion
 )
+
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)

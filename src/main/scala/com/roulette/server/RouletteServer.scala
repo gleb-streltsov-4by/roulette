@@ -1,44 +1,36 @@
 package com.roulette.server
 
-import fs2.Stream
-import cats.implicits._
 import cats.effect._
-import doobie.implicits._
-import org.http4s.dsl.io._
-import org.http4s.implicits._
-import cats.effect.{Async, Blocker, ConcurrentEffect, ContextShift, ExitCode, Resource, Sync, Timer}
 import com.roulette.server.repository.GameRepository
-import com.roulette.server.repository.impl.DoobieGameRepository
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
 import com.roulette.server.routes.RouletteRoutes
 import com.roulette.server.service.RouletteService
-import com.roulette.server.service.impl.RouletteServiceImpl
 import doobie.hikari.HikariTransactor
 import doobie.{ExecutionContexts, Transactor}
 
-import scala.concurrent.ExecutionContext.global
+import scala.concurrent.ExecutionContext
 
 object RouletteServer {
 
   val port = 9000
   val host = "localhost"
 
-  def configure[F[_]: ConcurrentEffect](implicit T: Timer[F]): Stream[F, ExitCode] = {
-    db[F]
+  def configure[F[_]: ContextShift : ConcurrentEffect: Sync](implicit T: Timer[F]): F[Unit] =
+    transactor[F]
       .use { tx =>
         val gameRepository = GameRepository.of[F](tx)
         val rouletteService = RouletteService.of[F](gameRepository)
 
         val httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
 
-        BlazeServerBuilder[F](global)
+        BlazeServerBuilder[F](ExecutionContext.global)
           .bindHttp(port, host)
           .withHttpApp(httpApp)
           .serve
+          .compile
+          .drain
       }
-      .as(ExitCode.Success)
-  }
 
   object DbConfig {
     val dbDriverName = "org.h2.Driver"
@@ -47,7 +39,7 @@ object RouletteServer {
     val dbPwd        = ""
   }
 
-  private def db[F[_]: ContextShift: Async]: Resource[F, Transactor[F]] =
+  private def transactor[F[_]: ContextShift: Async]: Resource[F, Transactor[F]] =
     for {
       ce <- ExecutionContexts.fixedThreadPool[F](10)
       be <- Blocker[F]

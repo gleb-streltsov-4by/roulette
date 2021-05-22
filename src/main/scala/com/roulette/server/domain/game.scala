@@ -8,8 +8,7 @@ object game {
 
   final case class Game(gameId: UUID,
                         minBetAmount: Int,
-                        maxBetAmount: Int,
-                        status: GameStatus)
+                        maxBetAmount: Int)
 
   sealed trait GameStatus extends EnumEntry
   object GameStatus extends Enum[GameStatus]{

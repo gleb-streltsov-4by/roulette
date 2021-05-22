@@ -4,18 +4,20 @@ import cats.implicits._
 import cats.effect.Sync
 import com.roulette.server.service.RouletteService
 import org.http4s.HttpRoutes
+import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.Http4sDsl
 
 object RouletteRoutes {
 
-  def routes[F[_] : Sync](rouletteService: RouletteService[F]): HttpRoutes[F] = {
+  def routes[F[_]: Sync](rouletteService: RouletteService[F]): HttpRoutes[F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
 
     def availableGamesRoutes: HttpRoutes[F] = {
       HttpRoutes.of[F] {
         case GET -> Root / "api" / "roulette" / "game" / "available" => for {
-          response <- rouletteService.findAvailableGames
+          games <- rouletteService.findAvailableGames
+          response <- Ok(games)
         } yield response
       }
     }
