@@ -2,7 +2,7 @@ package com.roulette.server.repository
 
 import cats.effect.Sync
 import com.roulette.server.domain.game.Game
-import com.roulette.server.repository.impl.DoobieGameRepository
+import com.roulette.server.repository.impl.doobie.DoobieGameRepository
 import doobie.Transactor
 
 trait GameRepository[F[_]] {

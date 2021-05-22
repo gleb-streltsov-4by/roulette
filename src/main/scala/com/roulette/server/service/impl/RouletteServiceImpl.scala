@@ -11,5 +11,5 @@ class RouletteServiceImpl[F[_]: Sync](gameRepository: GameRepository[F]) extends
 
   override def findAvailableGames: F[List[GameDto]] = for {
     availableGames <- gameRepository.findAvailableGames
-  } yield availableGames.map(_.into[GameDto].transform)
+  } yield availableGames.map(_.into[GameDto].withFieldComputed(_.status, _.status.toString).transform)
 }

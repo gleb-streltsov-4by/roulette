@@ -11,7 +11,8 @@ object DbConf {
 
   private val applicationConfNamespace = "db"
 
-  final case class DbConf(driver: String,
+  final case class DbConf(provider: String,
+                          driver: String,
                           url: String,
                           user: String,
                           password: String,

@@ -6,7 +6,8 @@ object game {
 
   @JsonCodec final case class GameDto(id: Int,
                                       minBetAmount: Int,
-                                      maxBetAmount: Int)
+                                      maxBetAmount: Int,
+                                      status: String)
 
   @JsonCodec final case class BetDto(id: Int,
                                      playerId: Int,

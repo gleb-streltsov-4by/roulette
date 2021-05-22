@@ -4,6 +4,7 @@ import cats.implicits._
 import cats.effect._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
+
 import com.roulette.server.routes.RouletteRoutes
 import com.roulette.server.service.RouletteService
 import com.roulette.server.conf.DbConf._

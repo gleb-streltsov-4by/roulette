@@ -19,7 +19,7 @@ object FlywayConf {
         Flyway
           .configure()
           .dataSource(dbConf.url, dbConf.user, dbConf.password)
-          .locations(dbConf.migrationLocation)
+          .locations(s"${dbConf.migrationLocation}/${dbConf.provider}")
           .load()
       )
     }

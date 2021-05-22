@@ -6,14 +6,16 @@ object game {
 
   final case class Game(id: Int,
                         minBetAmount: Int,
-                        maxBetAmount: Int)
+                        maxBetAmount: Int,
+                        status: GameStatus)
 
   sealed trait GameStatus extends EnumEntry
   object GameStatus extends Enum[GameStatus]{
 
     val values: IndexedSeq[GameStatus] = findValues
 
-    final case object BetsSubmission extends GameStatus
+    final case object Announced extends GameStatus
+    final case object BetSubmission extends GameStatus
     final case object InProgress extends GameStatus
     final case object Suspended extends GameStatus
     final case object Archived extends GameStatus
