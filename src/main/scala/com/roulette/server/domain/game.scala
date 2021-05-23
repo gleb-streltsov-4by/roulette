@@ -5,8 +5,10 @@ import enumeratum.{Enum, EnumEntry}
 object game {
 
   final case class Game(id: Int,
+                        name: String,
                         minBetAmount: Int,
                         maxBetAmount: Int,
+                        maxPlayerCount: Int,
                         status: GameStatus)
 
   sealed trait GameStatus extends EnumEntry
@@ -28,11 +30,30 @@ object game {
     }
   }
 
-  final case class Bet(id: Int,
-                       playerId: Int,
-                       gameId: Int,
-                       amount: Int,
-                       combination: RouletteCombination)
+  final case class PlayerGameSession(id: Int,
+                                     playerId: Int,
+                                     gameId: Int,
+                                     betAmount: Int,
+                                     betType: BetType,
+                                     betDetails: List[RouletteNumber],
+                                     sessionStatus: PlayerGameSessionStatus,
+                                     resultNumber: Option[RouletteNumber])
+
+  sealed trait PlayerGameSessionStatus extends EnumEntry
+  object PlayerGameSessionStatus extends Enum[PlayerGameSessionStatus]{
+
+    val values: IndexedSeq[PlayerGameSessionStatus] = findValues
+
+    final case object ACTIVE extends PlayerGameSessionStatus
+    final case object INACTIVE extends PlayerGameSessionStatus
+
+    def of(status: String): Either[String, PlayerGameSessionStatus] = {
+      val option = PlayerGameSessionStatus.withNameInsensitiveOption(status)
+
+      Either.cond(option.isDefined, option.get,
+        s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}")
+    }
+  }
 
   sealed trait RouletteNumberColor extends EnumEntry
   object RouletteNumberColor extends Enum[RouletteNumberColor]{
@@ -65,23 +86,23 @@ object game {
     }
   }
 
-  sealed trait RouletteCombination extends EnumEntry
-  object RouletteCombination extends Enum[RouletteCombination] {
-    val values: IndexedSeq[RouletteCombination] = findValues
+  sealed trait BetType extends EnumEntry
+  object BetType extends Enum[BetType] {
+    val values: IndexedSeq[BetType] = findValues
 
     // Inside Bets
-    final case object StraightUp extends RouletteCombination
-    final case object Split extends RouletteCombination
-    final case object Street extends RouletteCombination
-    final case object Corner extends RouletteCombination
-    final case object Line extends RouletteCombination
+    final case object StraightUp extends BetType
+    final case object Split extends BetType
+    final case object Street extends BetType
+    final case object Corner extends BetType
+    final case object Line extends BetType
 
     // Outside Bets
-    final case object Column extends RouletteCombination
-    final case object Dozen extends RouletteCombination
-    final case object RedOrBlack extends RouletteCombination
-    final case object EvenOrOdd extends RouletteCombination
-    final case object LowOrHigh extends RouletteCombination
+    final case object Column extends BetType
+    final case object Dozen extends BetType
+    final case object RedOrBlack extends BetType
+    final case object EvenOrOdd extends BetType
+    final case object LowOrHigh extends BetType
   }
 
 }
