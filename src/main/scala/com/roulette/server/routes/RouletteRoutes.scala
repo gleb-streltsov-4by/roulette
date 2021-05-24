@@ -54,7 +54,7 @@ object RouletteRoutes {
     def joinGame: HttpRoutes[F] =
       HttpRoutes.of[F] {
         case request @ POST -> Root / "api" / "roulette" / "game" / "join" => {
-          val response = for {
+          (for {
             session       <- request.as[PlayerGameSessionDto]
             gameSessions  <- rouletteService.addUserToGame(session)
 
@@ -62,16 +62,14 @@ object RouletteRoutes {
               case Left(error)  => gameErrorToHttpResponse(error)
               case Right(dto)   => Ok(dto)
             }
-          } yield response
-
-          response.flatten
+          } yield response).flatten
         }
       }
 
     def leftGame: HttpRoutes[F] =
       HttpRoutes.of[F] {
         case request @ DELETE -> Root / "api" / "roulette" / "game" / "left" => {
-          val response = for {
+          (for {
             leftGame      <- request.as[LeftGameDto]
             gameSessions  <- rouletteService.removeUserFromGame(leftGame)
 
@@ -79,9 +77,7 @@ object RouletteRoutes {
               case Left(error)  => gameErrorToHttpResponse(error)
               case Right(dto)   => Ok(dto)
             }
-          } yield response
-
-          response.flatten
+          } yield response).flatten
         }
       }
 

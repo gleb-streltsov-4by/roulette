@@ -3,7 +3,7 @@ package com.roulette.server.service.impl
 import cats.effect.Sync
 import cats.implicits._
 import com.roulette.server.dto.game
-import io.scalaland.chimney.dsl._
+import com.roulette.server.util.DtoMapper._
 import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto}
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.service.RouletteService
@@ -13,7 +13,7 @@ class RouletteServiceImpl[F[_]: Sync](gameRepository: GameRepository[F]) extends
 
   override def findAvailableGames: F[List[GameDto]] = for {
     availableGames <- gameRepository.findAvailableGames
-  } yield availableGames.map(_.into[GameDto].withFieldComputed(_.status, _.status.toString).transform)
+  } yield availableGames.map(gameDomainToDto)
 
   override def updateGame(game: GameDto): F[Either[GameValidationError, GameDto]] = ???
 
