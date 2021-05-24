@@ -4,11 +4,11 @@ import cats.implicits._
 import cats.effect._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
-
 import com.roulette.server.routes.RouletteRoutes
 import com.roulette.server.service.RouletteService
 import com.roulette.server.conf.DbConf._
 import com.roulette.server.conf.FlywayConf._
+import com.roulette.server.core.RouletteEngine
 import com.roulette.server.repository.GameRepository
 
 import scala.concurrent.ExecutionContext
@@ -27,7 +27,8 @@ object RouletteServer {
 
     resourceF.flatMap(_.use { tx =>
       val gameRepository = GameRepository.of[F](tx)
-      val rouletteService = RouletteService.of[F](gameRepository)
+      val rouletteEngine = RouletteEngine.of[F]
+      val rouletteService = RouletteService.of[F](gameRepository, rouletteEngine)
 
       val httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
 

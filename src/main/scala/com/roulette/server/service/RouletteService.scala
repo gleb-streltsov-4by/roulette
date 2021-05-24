@@ -1,6 +1,7 @@
 package com.roulette.server.service
 
 import cats.effect.Sync
+import com.roulette.server.core.RouletteEngine
 import com.roulette.server.dto.game.{GameDto, LeftGameDto, PlayerGameSessionDto}
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.service.error.game.GameValidationError
@@ -16,6 +17,7 @@ trait RouletteService[F[_]] {
 }
 
 object RouletteService {
-  def of[F[_]: Sync](gameRepository: GameRepository[F]): RouletteService[F] =
-    new RouletteServiceImpl[F](gameRepository)
+  def of[F[_]: Sync](gameRepository: GameRepository[F],
+                     rouletteEngine: RouletteEngine[F]): RouletteService[F] =
+    new RouletteServiceImpl[F](gameRepository, rouletteEngine)
 }

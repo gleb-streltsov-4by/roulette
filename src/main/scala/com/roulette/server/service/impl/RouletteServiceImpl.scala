@@ -2,6 +2,7 @@ package com.roulette.server.service.impl
 
 import cats.effect.Sync
 import cats.implicits._
+import com.roulette.server.core.RouletteEngine
 import com.roulette.server.domain.game.{Game, GameStatus}
 import com.roulette.server.dto.game
 import com.roulette.server.util.DtoMapper._
@@ -11,7 +12,9 @@ import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.error.game.GameValidationError._
 
-class RouletteServiceImpl[F[_]: Sync](gameRepository: GameRepository[F]) extends RouletteService[F] {
+class RouletteServiceImpl[F[_]: Sync] (
+  gameRepository: GameRepository[F],
+  rouletteEngine: RouletteEngine[F]) extends RouletteService[F] {
 
   override def findAvailableGames: F[List[GameDto]] = for {
     availableGames <- gameRepository.findAvailableGames
@@ -21,12 +24,6 @@ class RouletteServiceImpl[F[_]: Sync](gameRepository: GameRepository[F]) extends
     gameE     <- validateGame(game)
     updatedE  <- gameE.traverse(gameRepository.updateGame)
   } yield updatedE.map(gameDomainToDto)
-
-  override def createGame(game: GameDto): F[Either[GameValidationError, GameDto]] = ???
-
-  override def addUserToGame(session: PlayerGameSessionDto): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
-
-  override def removeUserFromGame(leftGame: game.LeftGameDto): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
 
   private def validateGame(game: GameDto): F[Either[GameValidationError, Game]] =
     gameRepository.findById(game.id)
@@ -41,4 +38,10 @@ class RouletteServiceImpl[F[_]: Sync](gameRepository: GameRepository[F]) extends
 
         result = gameDtoToDomain(game, validStatus)
       } yield result)
+
+  override def createGame(game: GameDto): F[Either[GameValidationError, GameDto]] = ???
+
+  override def addUserToGame(session: PlayerGameSessionDto): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
+
+  override def removeUserFromGame(leftGame: game.LeftGameDto): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
 }

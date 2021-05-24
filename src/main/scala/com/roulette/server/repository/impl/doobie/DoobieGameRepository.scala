@@ -6,14 +6,12 @@ import doobie.implicits._
 import doobie.{Fragment, Transactor}
 import com.roulette.server.domain.game.Game
 import com.roulette.server.repository.GameRepository
-import meta.implicits._
+import com.roulette.server.repository.impl.doobie.meta.implicits._
 
 class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(
   implicit ev: Bracket[F, Throwable]) extends GameRepository[F] {
 
-
   private val games: Fragment = fr"SELECT * FROM game"
-
 
   override def findById(gameId: Int): F[Option[Game]] =
     (games ++ fr"WHERE id = $gameId").query[Game].option.transact(tx)
