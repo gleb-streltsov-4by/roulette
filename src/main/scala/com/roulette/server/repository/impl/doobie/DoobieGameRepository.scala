@@ -8,8 +8,9 @@ import com.roulette.server.domain.game.Game
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.repository.impl.doobie.meta.implicits._
 
-class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(
-  implicit ev: Bracket[F, Throwable]) extends GameRepository[F] {
+class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit
+    ev: Bracket[F, Throwable]
+) extends GameRepository[F] {
 
   private val games: Fragment = fr"SELECT * FROM game"
 
@@ -17,13 +18,18 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(
     (games ++ fr"WHERE id = $gameId").query[Game].option.transact(tx)
 
   override def findAvailableGames: F[List[Game]] =
-    (games ++ fr"WHERE status = 'BET_SUBMISSION'").query[Game].to[List].transact(tx)
+    (games ++ fr"WHERE status = 'BET_SUBMISSION'")
+      .query[Game]
+      .to[List]
+      .transact(tx)
 
   override def updateGame(game: Game): F[Game] = ???
 
   override def createGame(game: Game): F[Game] = ???
 
-  override def addUserToGame(session: game.PlayerGameSession): F[game.PlayerGameSession] = ???
+  override def addUserToGame(
+      session: game.PlayerGameSession
+  ): F[game.PlayerGameSession] = ???
 
   override def removeUserFromGame(gameId: Int, playerId: Int): F[Int] = ???
 }

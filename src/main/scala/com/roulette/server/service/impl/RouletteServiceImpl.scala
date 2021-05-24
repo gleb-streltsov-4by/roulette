@@ -21,11 +21,13 @@ class RouletteServiceImpl[F[_]: Sync] (
   } yield availableGames.map(gameDomainToDto)
 
   override def updateGame(game: GameDto): F[Either[GameValidationError, GameDto]] = for {
+  // EitherT
     gameE     <- validateGame(game)
     updatedE  <- gameE.traverse(gameRepository.updateGame)
   } yield updatedE.map(gameDomainToDto)
 
   private def validateGame(game: GameDto): F[Either[GameValidationError, Game]] =
+  // EitherT
     gameRepository.findById(game.id)
       .map(gameOpt => for {
         _ <- Either.cond(gameOpt.isDefined, gameOpt.get, GameNotFound(game))

@@ -4,15 +4,17 @@ import enumeratum.{Enum, EnumEntry}
 
 object game {
 
-  final case class Game(id: Int,
-                        name: String,
-                        minBetAmount: Int,
-                        maxBetAmount: Int,
-                        maxPlayerCount: Int,
-                        status: GameStatus)
+  final case class Game(
+      id: Int,
+      name: String,
+      minBetAmount: Int,
+      maxBetAmount: Int,
+      maxPlayerCount: Int,
+      status: GameStatus
+  )
 
   sealed trait GameStatus extends EnumEntry
-  object GameStatus extends Enum[GameStatus]{
+  object GameStatus extends Enum[GameStatus] {
 
     val values: IndexedSeq[GameStatus] = findValues
 
@@ -23,24 +25,27 @@ object game {
     final case object Archived extends GameStatus
 
     def of(status: String): Either[String, GameStatus] = {
-      val option = GameStatus.withNameInsensitiveOption(status)
-
-      Either.cond(option.isDefined, option.get,
-        s"Game status `$status` is invalid... Available are: ${GameStatus.values}")
+      GameStatus
+        .withNameInsensitiveOption(status)
+        .toRight(
+          s"Game status `$status` is invalid... Available are: ${GameStatus.values}"
+        )
     }
   }
 
-  final case class PlayerGameSession(id: Int,
-                                     playerId: Int,
-                                     gameId: Int,
-                                     betAmount: Int,
-                                     betType: BetType,
-                                     betDetails: List[RouletteNumber],
-                                     sessionStatus: PlayerGameSessionStatus,
-                                     resultNumber: Option[RouletteNumber])
+  final case class PlayerGameSession(
+      id: Int,
+      playerId: Int,
+      gameId: Int,
+      betAmount: Int,
+      betType: BetType,
+      betDetails: List[RouletteNumber],
+      sessionStatus: PlayerGameSessionStatus,
+      resultNumber: Option[RouletteNumber]
+  )
 
   sealed trait PlayerGameSessionStatus extends EnumEntry
-  object PlayerGameSessionStatus extends Enum[PlayerGameSessionStatus]{
+  object PlayerGameSessionStatus extends Enum[PlayerGameSessionStatus] {
 
     val values: IndexedSeq[PlayerGameSessionStatus] = findValues
 
@@ -50,13 +55,16 @@ object game {
     def of(status: String): Either[String, PlayerGameSessionStatus] = {
       val option = PlayerGameSessionStatus.withNameInsensitiveOption(status)
 
-      Either.cond(option.isDefined, option.get,
-        s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}")
+      Either.cond(
+        option.isDefined,
+        option.get,
+        s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}"
+      )
     }
   }
 
   sealed trait RouletteNumberColor extends EnumEntry
-  object RouletteNumberColor extends Enum[RouletteNumberColor]{
+  object RouletteNumberColor extends Enum[RouletteNumberColor] {
 
     val values: IndexedSeq[RouletteNumberColor] = findValues
 
@@ -66,20 +74,29 @@ object game {
     def of(color: String): Either[String, RouletteNumberColor] = {
       val option = RouletteNumberColor.withNameInsensitiveOption(color)
 
-      Either.cond(option.isDefined, option.get,
-        s"Color `$color` is invalid... Available colors are: ${RouletteNumberColor.values}")
+      Either.cond(
+        option.isDefined,
+        option.get,
+        s"Color `$color` is invalid... Available colors are: ${RouletteNumberColor.values}"
+      )
     }
   }
 
-  sealed abstract case class RouletteNumber private(value: Int, color: RouletteNumberColor)
+  sealed abstract case class RouletteNumber private (
+      value: Int,
+      color: RouletteNumberColor
+  )
   object RouletteNumber {
     private val minValue = 1
     private val maxValue = 36
 
     def of(value: Int, color: String): Either[String, RouletteNumber] = {
       for {
-        validatedValue <- Either.cond(value >= minValue && value <= maxValue, value,
-          s"Value `$value` is out of range [$minValue; $maxValue]")
+        validatedValue <- Either.cond(
+          value >= minValue && value <= maxValue,
+          value,
+          s"Value `$value` is out of range [$minValue; $maxValue]"
+        )
 
         validatedColor <- RouletteNumberColor.of(color)
       } yield new RouletteNumber(validatedValue, validatedColor) {}

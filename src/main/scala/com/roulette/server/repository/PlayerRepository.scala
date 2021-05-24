@@ -14,4 +14,3 @@ object PlayerRepository {
   def of[F[_]: Sync](tx: Transactor[F]): DoobiePlayerRepository[F] =
     new DoobiePlayerRepository[F](tx)
 }
-

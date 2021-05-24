@@ -7,12 +7,12 @@ import doobie.Meta
 object implicits {
 
   implicit val gameStatusMeta: Meta[GameStatus] =
-    Meta[String].timap(
-      s => GameStatus.withNameInsensitive(snakeToCamel(s.toLowerCase)))(
-      g => {
-        val str = g.toString
-        val pureCamelCase = str.charAt(0).toLower + str.substring(1)
+    Meta[String].timap(s =>
+      GameStatus.withNameInsensitive(snakeToCamel(s.toLowerCase))
+    )(g => {
+      val str = g.toString
+      val pureCamelCase = str.charAt(0).toLower + str.substring(1)
 
-        camelToSnake(pureCamelCase).toUpperCase
-      })
+      camelToSnake(pureCamelCase).toUpperCase
+    })
 }

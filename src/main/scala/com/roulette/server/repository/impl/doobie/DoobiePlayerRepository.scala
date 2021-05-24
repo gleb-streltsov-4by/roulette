@@ -6,8 +6,9 @@ import doobie.{Fragment, Transactor}
 import com.roulette.server.domain.player.Player
 import com.roulette.server.repository.PlayerRepository
 
-class DoobiePlayerRepository [F[_]: Sync](tx: Transactor[F])(
-  implicit ev: Bracket[F, Throwable]) extends PlayerRepository[F] {
+class DoobiePlayerRepository[F[_]: Sync](tx: Transactor[F])(implicit
+    ev: Bracket[F, Throwable]
+) extends PlayerRepository[F] {
 
   private val players: Fragment = fr"SELECT * FROM player"
 

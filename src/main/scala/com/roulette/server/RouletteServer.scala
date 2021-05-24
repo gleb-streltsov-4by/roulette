@@ -15,23 +15,28 @@ import scala.concurrent.ExecutionContext
 
 object RouletteServer {
 
+  // TODO: put into application.conf
   val port = 9000
   val host = "localhost"
 
-  def configure[F[_]: ContextShift : ConcurrentEffect: Sync](implicit T: Timer[F]): F[Unit] = {
-    val resourceF = for {
-      dbConf  <- dbConf[F]
-      _       <- migrate(dbConf)
+  def configure[F[_]: ContextShift: ConcurrentEffect: Sync: Timer]: F[Unit] = {
+    val transactorResourceF = for { // rename
+      dbConf <- dbConf[F]
+      _ <- migrate(dbConf)
+
       tx = transactor[F](dbConf)
     } yield tx
 
-    resourceF.flatMap(_.use { tx =>
+    transactorResourceF.flatMap(_.use { tx =>
       val gameRepository = GameRepository.of[F](tx)
       val rouletteEngine = RouletteEngine.of[F]
-      val rouletteService = RouletteService.of[F](gameRepository, rouletteEngine)
+
+      val rouletteService =
+        RouletteService.of[F](gameRepository, rouletteEngine)
 
       val httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
 
+      // TODO: one for
       BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(port, host)
         .withHttpApp(httpApp)
