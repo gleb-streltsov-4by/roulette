@@ -7,6 +7,7 @@ import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.impl.RouletteServiceImpl
 
 trait RouletteService[F[_]] {
+  // Question: What is better Either[Error, Value] or using implicit MonadError?
   def findAvailableGames: F[List[GameDto]]
   def updateGame(game: GameDto): F[Either[GameValidationError, GameDto]]
   def createGame(game: GameDto): F[Either[GameValidationError, GameDto]]

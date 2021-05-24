@@ -6,6 +6,7 @@ import com.roulette.server.repository.impl.doobie.DoobieGameRepository
 import doobie.Transactor
 
 trait GameRepository[F[_]] {
+  def findById(gameId: Int): F[Option[Game]]
   def findAvailableGames: F[List[Game]]
   def updateGame(game: Game): F[Game]
   def createGame(game: Game): F[Game]
