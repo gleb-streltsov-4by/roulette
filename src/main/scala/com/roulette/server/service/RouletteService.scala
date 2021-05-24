@@ -19,6 +19,10 @@ trait RouletteService[F[_]] {
   def removeUserFromGame(
       leftGame: LeftGameDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
+
+  def startGame(
+      gameId: Int
+  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
 }
 
 object RouletteService {

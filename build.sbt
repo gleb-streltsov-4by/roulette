@@ -1,4 +1,3 @@
-
 name := "roulette-server"
 
 version := "0.1"
@@ -8,7 +7,7 @@ scalaVersion := "2.13.4"
 scalacOptions ++= Seq(
   "-deprecation",
   "-feature",
-  "-Ymacro-annotations",
+  "-Ymacro-annotations"
 )
 
 ThisBuild / organization := "com.search_bot"
@@ -72,4 +71,6 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.2.6"
 )
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)
+addCompilerPlugin(
+  "org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full
+)

@@ -19,6 +19,7 @@ object game {
       id: Int,
       playerId: Int,
       gameId: Int,
+      isHost: Boolean,
       betAmount: Int,
       betType: String,
       betDetails: List[RouletteNumberDto],

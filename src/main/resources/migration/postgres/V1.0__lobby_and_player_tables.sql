@@ -28,8 +28,9 @@ CREATE TYPE GAME_SESSION_STATUS AS ENUM ('ACTIVE', 'INACTIVE');
 
 CREATE TABLE IF NOT EXISTS player_game_session (
     id SERIAL,
-    player_id bigint NOT NULL,
-    game_id bigint NOT NULL,
+    player_id BIGINT NOT NULL,
+    game_id BIGINT NOT NULL,
+    is_host BOOLEAN NOT NULL,
     bet_amount INT NOT NULL,
     bet_type BET_TYPE NOT NULL,
     bet_details VARCHAR(64) NOT NULL,

@@ -37,6 +37,7 @@ object game {
       id: Int,
       playerId: Int,
       gameId: Int,
+      isHost: Boolean,
       betAmount: Int,
       betType: BetType,
       betDetails: List[RouletteNumber],
