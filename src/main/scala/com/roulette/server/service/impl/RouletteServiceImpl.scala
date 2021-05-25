@@ -14,7 +14,7 @@ import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.error.game.GameValidationError._
 
-class RouletteServiceImpl[F[_]: Sync: Applicative](
+class RouletteServiceImpl[F[_]: Sync](
     gameRepository: GameRepository[F],
     rouletteEngine: RouletteEngine[F]
 ) extends RouletteService[F] {
