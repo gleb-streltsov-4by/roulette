@@ -21,26 +21,10 @@ object DbConf {
   )
 
   def dbConf[F[_]: Sync]: F[DbConf] = {
-
-    /*
-
-    def load[F[_]: ApplicativeThrowable](config: Config, namespace: String): F[KafkaConfig] = {
-    val conf = ConfigSource
-      .fromConfig(config)
-      .at(namespace)
-      .load[JournalConfig]
-      .map(_.kafka)
-      .toOption
-
-    ApplicativeThrowable.summon[F].fromOption(conf, new RuntimeException(s"conf $namespace not found"))
-  }
-
-     */
     Sync[F]
       .delay(ConfigSource.default.at(applicationConfNamespace).load[DbConf])
       .flatMap[DbConf] { case Right(conf) =>
         conf.pure[F]
-      // if left it will blow up
       }
   }
 

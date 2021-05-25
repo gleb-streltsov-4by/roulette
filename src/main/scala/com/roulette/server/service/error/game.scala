@@ -1,6 +1,6 @@
 package com.roulette.server.service.error
 
-import com.roulette.server.dto.game.GameDto
+import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto}
 import com.roulette.server.dto.player.PlayerDto
 
 object game {
@@ -13,6 +13,17 @@ object game {
     final case class GameNotFound(game: GameDto) extends GameValidationError {
       override def message: String =
         s"The game with id `${game.id}` is not found"
+    }
+
+    final case class GameSessionNotFound(session: PlayerGameSessionDto)
+        extends GameValidationError {
+      override def message: String =
+        s"The game session with id `${session.id}` of game with id `${session.gameId}` is not found"
+    }
+
+    final case class PlayerNotFound(playerId: Int) extends GameValidationError {
+      override def message: String =
+        s"The player with id `$playerId` is not found"
     }
 
     final case class InvalidGameBets(game: GameDto)

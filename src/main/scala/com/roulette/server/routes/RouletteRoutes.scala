@@ -5,6 +5,11 @@ import cats.effect.{MonadThrow, Sync}
 import com.roulette.server.dto.game.{GameDto, LeftGameDto, PlayerGameSessionDto}
 import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
+import com.roulette.server.service.error.game.GameValidationError.{
+  GameNotFound,
+  GameSessionNotFound,
+  PlayerNotFound
+}
 import org.http4s.{EntityEncoder, HttpRoutes, Response}
 import org.http4s.circe.CirceEntityCodec.{
   circeEntityDecoder,
@@ -43,53 +48,42 @@ object RouletteRoutes {
     def createGame: HttpRoutes[F] =
       HttpRoutes.of[F] {
         case request @ POST -> Root / "api" / "roulette" / "game" =>
-          (for {
+          val res = for {
             game <- request.as[GameDto]
             created <- rouletteService.createGame(game)
+          } yield created
 
-            response = created match {
-              case Left(error) => gameErrorToHttpResponse(error)
-              case Right(dto)  => Ok(dto)
-            }
-          } yield response).flatten
+          marshalResponse(res)
       }
 
     def joinGame: HttpRoutes[F] =
       HttpRoutes.of[F] {
-        case request @ POST -> Root / "api" / "roulette" / "game" / "join" => {
-          (for {
+        case request @ POST -> Root / "api" / "roulette" / "game" / "join" =>
+          val res = for {
             session <- request.as[PlayerGameSessionDto]
             gameSessions <- rouletteService.addUserToGame(session)
+          } yield gameSessions
 
-            response = gameSessions match {
-              case Left(error) => gameErrorToHttpResponse(error)
-              case Right(dto)  => Ok(dto)
-            }
-          } yield response).flatten
-        }
+          marshalResponse(res)
       }
 
     def leftGame: HttpRoutes[F] =
       HttpRoutes.of[F] {
-        case request @ DELETE -> Root / "api" / "roulette" / "game" / "left" => {
-          (for {
+        case request @ DELETE -> Root / "api" / "roulette" / "game" / "left" =>
+          val res = for {
             leftGame <- request.as[LeftGameDto]
             gameSessions <- rouletteService.removeUserFromGame(leftGame)
+          } yield gameSessions
 
-            // TODO: replace with
-            // response = marshalResponse(gameSessions)
-
-            response = gameSessions match {
-              case Left(error) => gameErrorToHttpResponse(error)
-              case Right(dto)  => Ok(dto)
-            }
-          } yield response).flatten
-        }
+          marshalResponse(res)
       }
 
     def gameErrorToHttpResponse(error: GameValidationError): F[Response[F]] = {
-      error match { // TODO: remaining HTTP errors
-        case e @ _ => BadRequest(e.message)
+      error match {
+        case e @ GameNotFound(_)        => NotFound(e.message)
+        case e @ GameSessionNotFound(_) => NotFound(e.message)
+        case e @ PlayerNotFound(_)      => NotFound(e.message)
+        case e @ _                      => BadRequest(e.message)
       }
     }
 
