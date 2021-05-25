@@ -6,7 +6,11 @@ import com.roulette.server.domain.game.{PlayerGameSession, RouletteNumber}
 
 trait RouletteEngine[F[_]] {
   def generateNumber: F[RouletteNumber]
-  def evaluateBets(sessions: List[PlayerGameSession]): List[PlayerGameSession]
+
+  def evaluateBets(
+      resultNumber: RouletteNumber,
+      sessions: List[PlayerGameSession]
+  ): F[List[PlayerGameSession]]
 }
 
 object RouletteEngine {

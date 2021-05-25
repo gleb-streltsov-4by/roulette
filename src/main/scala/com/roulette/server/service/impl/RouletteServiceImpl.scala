@@ -35,6 +35,8 @@ class RouletteServiceImpl[F[_]: Sync](
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = {
     (for {
       gameSessions <- EitherT(validateGameSessions(gameId))
+      number <- rouletteEngine.generateNumber
+      results <- rouletteEngine.evaluateBets(number, gameSessions)
     } yield gameSessions.map(gameSessionDomainToDto)).value
   }
 
