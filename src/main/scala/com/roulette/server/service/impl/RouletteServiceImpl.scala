@@ -33,11 +33,16 @@ class RouletteServiceImpl[F[_]: Sync](
   override def startGame(
       gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = {
-    (for {
-      gameSessions <- EitherT(validateGameSessions(gameId))
-      number <- rouletteEngine.generateNumber
-      results <- rouletteEngine.evaluateBets(number, gameSessions)
-    } yield gameSessions.map(gameSessionDomainToDto)).value
+    val result: EitherT[F, GameValidationError, List[PlayerGameSessionDto]] =
+      for {
+        gameSessions <- EitherT(validateGameSessions(gameId))
+        number <- EitherT.liftF(rouletteEngine.generateNumber)
+        results <- EitherT.liftF(
+          rouletteEngine.evaluateBets(number, gameSessions)
+        )
+      } yield results.map(gameSessionDomainToDto)
+
+    result.value
   }
 
   private def validateGame(
