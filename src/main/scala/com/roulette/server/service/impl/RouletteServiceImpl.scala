@@ -1,6 +1,5 @@
 package com.roulette.server.service.impl
 
-import cats.Applicative
 import cats.data.EitherT
 import cats.effect.Sync
 import cats.implicits._
@@ -15,8 +14,8 @@ import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.error.game.GameValidationError._
 
 class RouletteServiceImpl[F[_]: Sync](
-    gameRepository: GameRepository[F],
-    rouletteEngine: RouletteEngine[F]
+  gameRepository: GameRepository[F],
+  rouletteEngine: RouletteEngine[F]
 ) extends RouletteService[F] {
 
   override def findAvailableGames: F[List[GameDto]] = for {
@@ -24,19 +23,19 @@ class RouletteServiceImpl[F[_]: Sync](
   } yield availableGames.map(gameDomainToDto)
 
   override def updateGame(
-      game: GameDto
+    game: GameDto
   ): F[Either[GameValidationError, GameDto]] = for {
-    gameE <- validateGame(game)
+    gameE    <- validateGame(game)
     updatedE <- gameE.traverse(gameRepository.updateGame)
   } yield updatedE.map(gameDomainToDto)
 
   override def startGame(
-      gameId: Int
+    gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = {
     val result: EitherT[F, GameValidationError, List[PlayerGameSessionDto]] =
       for {
         gameSessions <- EitherT(validateGameSessions(gameId))
-        number <- EitherT.liftF(rouletteEngine.generateNumber)
+        number       <- EitherT.liftF(rouletteEngine.generateNumber)
         results <- EitherT.liftF(
           rouletteEngine.evaluateBets(number, gameSessions)
         )
@@ -46,7 +45,7 @@ class RouletteServiceImpl[F[_]: Sync](
   }
 
   private def validateGame(
-      game: GameDto
+    game: GameDto
   ): F[Either[GameValidationError, Game]] =
     gameRepository
       .findById(game.id)
@@ -66,19 +65,19 @@ class RouletteServiceImpl[F[_]: Sync](
       )
 
   override def createGame(
-      game: GameDto
+    game: GameDto
   ): F[Either[GameValidationError, GameDto]] = ???
 
   override def addUserToGame(
-      session: PlayerGameSessionDto
+    session: PlayerGameSessionDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
 
   override def removeUserFromGame(
-      leftGame: game.LeftGameDto
+    leftGame: game.LeftGameDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
 
   private def validateGameSessions(
-      gameId: Int
+    gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSession]]] = ???
 
   private def check(): F[Unit] = for {

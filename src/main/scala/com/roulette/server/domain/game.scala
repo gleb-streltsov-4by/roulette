@@ -5,12 +5,12 @@ import enumeratum.{Enum, EnumEntry}
 object game {
 
   final case class Game(
-      id: Int,
-      name: String,
-      minBetAmount: Int,
-      maxBetAmount: Int,
-      maxPlayerCount: Int,
-      status: GameStatus
+    id:             Int,
+    name:           String,
+    minBetAmount:   Int,
+    maxBetAmount:   Int,
+    maxPlayerCount: Int,
+    status:         GameStatus
   )
 
   sealed trait GameStatus extends EnumEntry
@@ -34,15 +34,15 @@ object game {
   }
 
   final case class PlayerGameSession(
-      id: Int,
-      playerId: Int,
-      gameId: Int,
-      isHost: Boolean,
-      betAmount: Int,
-      betType: BetType,
-      betDetails: List[RouletteNumber],
-      sessionStatus: PlayerGameSessionStatus,
-      resultNumber: Option[RouletteNumber]
+    id:            Int,
+    playerId:      Int,
+    gameId:        Int,
+    isHost:        Boolean,
+    betAmount:     Int,
+    betType:       BetType,
+    betDetails:    List[RouletteNumber],
+    sessionStatus: PlayerGameSessionStatus,
+    resultNumber:  Option[RouletteNumber]
   )
 
   sealed trait PlayerGameSessionStatus extends EnumEntry
@@ -54,13 +54,9 @@ object game {
     final case object INACTIVE extends PlayerGameSessionStatus
 
     def of(status: String): Either[String, PlayerGameSessionStatus] = {
-      val option = PlayerGameSessionStatus.withNameInsensitiveOption(status)
-
-      Either.cond(
-        option.isDefined,
-        option.get,
-        s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}"
-      )
+      PlayerGameSessionStatus
+        .withNameInsensitiveOption(status)
+        .toRight(s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}")
     }
   }
 
@@ -84,8 +80,8 @@ object game {
   }
 
   sealed abstract case class RouletteNumber private (
-      value: Int,
-      color: RouletteNumberColor
+    value: Int,
+    color: RouletteNumberColor
   )
   object RouletteNumber {
     private val minValue = 1

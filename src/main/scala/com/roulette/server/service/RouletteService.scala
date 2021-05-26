@@ -13,22 +13,22 @@ trait RouletteService[F[_]] {
   def createGame(game: GameDto): F[Either[GameValidationError, GameDto]]
 
   def addUserToGame(
-      session: PlayerGameSessionDto
+    session: PlayerGameSessionDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
 
   def removeUserFromGame(
-      leftGame: LeftGameDto
+    leftGame: LeftGameDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
 
   def startGame(
-      gameId: Int
+    gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
 }
 
 object RouletteService {
   def of[F[_]: Sync](
-      gameRepository: GameRepository[F],
-      rouletteEngine: RouletteEngine[F]
+    gameRepository: GameRepository[F],
+    rouletteEngine: RouletteEngine[F]
   ): RouletteService[F] =
     new RouletteServiceImpl[F](gameRepository, rouletteEngine)
 }

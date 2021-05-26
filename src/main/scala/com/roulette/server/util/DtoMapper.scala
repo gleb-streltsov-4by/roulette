@@ -8,11 +8,7 @@ import com.roulette.server.domain.game.{
   PlayerGameSessionStatus,
   RouletteNumber
 }
-import com.roulette.server.dto.game.{
-  GameDto,
-  PlayerGameSessionDto,
-  RouletteNumberDto
-}
+import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto, RouletteNumberDto}
 import io.scalaland.chimney.dsl._
 
 object DtoMapper {
@@ -30,7 +26,7 @@ object DtoMapper {
       .transform
 
   def gameSessionDomainToDto(
-      gameSession: PlayerGameSession
+    gameSession: PlayerGameSession
   ): PlayerGameSessionDto =
     gameSession
       .into[PlayerGameSessionDto]
@@ -47,11 +43,11 @@ object DtoMapper {
       .transform
 
   def gameSessionDtoToDomain(
-      gameSession: PlayerGameSessionDto,
-      status: PlayerGameSessionStatus,
-      betType: BetType,
-      rouletteNumbers: List[RouletteNumber],
-      resultNumber: Option[RouletteNumber]
+    gameSession:     PlayerGameSessionDto,
+    status:          PlayerGameSessionStatus,
+    betType:         BetType,
+    rouletteNumbers: List[RouletteNumber],
+    resultNumber:    Option[RouletteNumber]
   ): PlayerGameSession =
     gameSession
       .into[PlayerGameSession]
@@ -62,7 +58,7 @@ object DtoMapper {
       .transform
 
   def rouletteNumberDomainToDto(
-      rouletteNumber: RouletteNumber
+    rouletteNumber: RouletteNumber
   ): RouletteNumberDto =
     rouletteNumber
       .into[RouletteNumberDto]

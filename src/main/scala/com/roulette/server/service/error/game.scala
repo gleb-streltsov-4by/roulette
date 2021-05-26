@@ -15,8 +15,7 @@ object game {
         s"The game with id `${game.id}` is not found"
     }
 
-    final case class GameSessionNotFound(session: PlayerGameSessionDto)
-        extends GameValidationError {
+    final case class GameSessionNotFound(session: PlayerGameSessionDto) extends GameValidationError {
       override def message: String =
         s"The game session with id `${session.id}` of game with id `${session.gameId}` is not found"
     }
@@ -26,14 +25,12 @@ object game {
         s"The player with id `$playerId` is not found"
     }
 
-    final case class InvalidGameBets(game: GameDto)
-        extends GameValidationError {
+    final case class InvalidGameBets(game: GameDto) extends GameValidationError {
       override def message: String = "Invalid bets are specified. " +
         s"Minimal `${game.minBetAmount}` should be lower than maximum `${game.maxBetAmount}`."
     }
 
-    final case class InvalidGameStatus(game: GameDto)
-        extends GameValidationError {
+    final case class InvalidGameStatus(game: GameDto) extends GameValidationError {
       override def message: String = s"Status `${game.status}` is invalid."
     }
 
@@ -42,16 +39,15 @@ object game {
     }
 
     final case class PlayerBetIsInvalid(
-        players: List[PlayerDto],
-        minBetAmount: Int,
-        maxBetAmount: Int
+      players:      List[PlayerDto],
+      minBetAmount: Int,
+      maxBetAmount: Int
     ) extends GameValidationError {
       override def message: String = {
         val lobbyBets =
           s"The minimum and maximum bets of the lobby are: `$minBetAmount`, $maxBetAmount."
-        val playersBets = players.foldLeft("\n")((acc, player) =>
-          s"$acc player `${player.name}` bet is ${player.name}\n"
-        )
+        val playersBets =
+          players.foldLeft("\n")((acc, player) => s"$acc player `${player.name}` bet is ${player.name}\n")
 
         lobbyBets + playersBets
       }

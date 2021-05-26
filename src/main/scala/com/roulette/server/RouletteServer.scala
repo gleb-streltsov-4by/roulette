@@ -4,42 +4,41 @@ import cats.implicits._
 import cats.effect._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.implicits._
+import io.circe.config.parser
+import com.roulette.server.conf.app._
+import com.roulette.server.conf.db._
 import com.roulette.server.routes.RouletteRoutes
 import com.roulette.server.service.RouletteService
-import com.roulette.server.conf.DbConf._
-import com.roulette.server.conf.FlywayConf._
-import com.roulette.server.conf.ServerConf._
 import com.roulette.server.core.RouletteEngine
 import com.roulette.server.repository.GameRepository
+import org.http4s.server.Server
 
 import scala.concurrent.ExecutionContext
 
-object RouletteServer {
+object RouletteServer extends IOApp {
 
-  def configure[F[_]: ContextShift: ConcurrentEffect: Sync: Timer]: F[Unit] = {
-    val transactorResourceF = for {
-      dbConf <- dbConf[F]
-      _ <- migrate(dbConf)
+  override def run(args: List[String]): IO[ExitCode] =
+    serverResource[IO]
+      .use(_ => IO.never)
+      .as(ExitCode.Success)
 
-      tx = transactor[F](dbConf)
-    } yield tx
+  private def serverResource[F[_]: ContextShift: ConcurrentEffect: Sync: Timer]: Resource[F, Server[F]] = for {
+    conf <- Resource.eval(parser.decodePathF[F, AppConf]("app"))
+    tx   <- transactor[F](conf.db)
 
-    transactorResourceF.flatMap(_.use { tx =>
-      val gameRepository = GameRepository.of[F](tx)
-      val rouletteEngine = RouletteEngine.of[F]
+    migrator <- Resource.eval(migrator[F](conf.db))
+    _        <- Resource.eval(migrator.migrate())
 
-      val rouletteService =
-        RouletteService.of[F](gameRepository, rouletteEngine)
+    gameRepository  = GameRepository.of[F](tx)
+    rouletteEngine  = RouletteEngine.of[F]
+    rouletteService = RouletteService.of[F](gameRepository, rouletteEngine)
 
-      val httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
+    httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
 
-      BlazeServerBuilder[F](ExecutionContext.global)
-        .bindHttp(port, host)
-        .withHttpApp(httpApp)
-        .serve
-        .compile
-        .drain
-    })
+    server <- BlazeServerBuilder[F](ExecutionContext.global)
+      .bindHttp(conf.server.port, conf.server.host)
+      .withHttpApp(httpApp)
+      .resource
 
-  }
+  } yield server
 }

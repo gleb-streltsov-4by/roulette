@@ -10,7 +10,8 @@ trait GameRepository[F[_]] {
   def findAvailableGames: F[List[Game]]
   def updateGame(game: Game): F[Game]
   def createGame(game: Game): F[Game]
-  def addUserToGame(session: PlayerGameSession): F[PlayerGameSession]
+
+  def addUserToGame(session:     PlayerGameSession): F[PlayerGameSession]
   def removeUserFromGame(gameId: Int, playerId: Int): F[Int]
 }
 
