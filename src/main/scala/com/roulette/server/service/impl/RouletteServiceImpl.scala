@@ -1,5 +1,6 @@
 package com.roulette.server.service.impl
 
+import cats.Applicative
 import cats.data.EitherT
 import cats.effect.Sync
 import cats.implicits._
@@ -29,24 +30,19 @@ class RouletteServiceImpl[F[_]: Sync](
     updatedE <- gameE.traverse(gameRepository.updateGame)
   } yield updatedE.map(gameDomainToDto)
 
-  override def createGame(
-      game: GameDto
-  ): F[Either[GameValidationError, GameDto]] = ???
-
-  override def addUserToGame(
-      session: PlayerGameSessionDto
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
-
-  override def removeUserFromGame(
-      leftGame: game.LeftGameDto
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
-
   override def startGame(
       gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = {
-    (for {
-      gameSessions <- EitherT(validateGameSessions(gameId))
-    } yield gameSessions.map(gameSessionDomainToDto)).value
+    val result: EitherT[F, GameValidationError, List[PlayerGameSessionDto]] =
+      for {
+        gameSessions <- EitherT(validateGameSessions(gameId))
+        number <- EitherT.liftF(rouletteEngine.generateNumber)
+        results <- EitherT.liftF(
+          rouletteEngine.evaluateBets(number, gameSessions)
+        )
+      } yield results.map(gameSessionDomainToDto)
+
+    result.value
   }
 
   private def validateGame(
@@ -69,7 +65,23 @@ class RouletteServiceImpl[F[_]: Sync](
         } yield gameDtoToDomain(game, status)
       )
 
+  override def createGame(
+      game: GameDto
+  ): F[Either[GameValidationError, GameDto]] = ???
+
+  override def addUserToGame(
+      session: PlayerGameSessionDto
+  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
+
+  override def removeUserFromGame(
+      leftGame: game.LeftGameDto
+  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
+
   private def validateGameSessions(
       gameId: Int
   ): F[Either[GameValidationError, List[PlayerGameSession]]] = ???
+
+  private def check(): F[Unit] = for {
+    number <- rouletteEngine.generateNumber
+  } yield ()
 }

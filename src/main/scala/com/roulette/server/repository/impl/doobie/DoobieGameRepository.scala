@@ -15,7 +15,10 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit
   private val games: Fragment = fr"SELECT * FROM game"
 
   override def findById(gameId: Int): F[Option[Game]] =
-    (games ++ fr"WHERE id = $gameId").query[Game].option.transact(tx)
+    (games ++ fr"WHERE id = $gameId")
+      .query[Game]
+      .option
+      .transact(tx)
 
   override def findAvailableGames: F[List[Game]] =
     (games ++ fr"WHERE status = 'BET_SUBMISSION'")
@@ -23,13 +26,13 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit
       .to[List]
       .transact(tx)
 
-  override def updateGame(game: Game): F[Game] = ???
-
-  override def createGame(game: Game): F[Game] = ???
-
   override def addUserToGame(
       session: game.PlayerGameSession
   ): F[game.PlayerGameSession] = ???
+
+  override def updateGame(game: Game): F[Game] = ???
+
+  override def createGame(game: Game): F[Game] = ???
 
   override def removeUserFromGame(gameId: Int, playerId: Int): F[Int] = ???
 }

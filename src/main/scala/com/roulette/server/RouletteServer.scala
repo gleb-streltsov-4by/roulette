@@ -8,6 +8,7 @@ import com.roulette.server.routes.RouletteRoutes
 import com.roulette.server.service.RouletteService
 import com.roulette.server.conf.DbConf._
 import com.roulette.server.conf.FlywayConf._
+import com.roulette.server.conf.ServerConf._
 import com.roulette.server.core.RouletteEngine
 import com.roulette.server.repository.GameRepository
 
@@ -15,12 +16,8 @@ import scala.concurrent.ExecutionContext
 
 object RouletteServer {
 
-  // TODO: put into application.conf
-  val port = 9000
-  val host = "localhost"
-
   def configure[F[_]: ContextShift: ConcurrentEffect: Sync: Timer]: F[Unit] = {
-    val transactorResourceF = for { // rename
+    val transactorResourceF = for {
       dbConf <- dbConf[F]
       _ <- migrate(dbConf)
 
@@ -36,7 +33,6 @@ object RouletteServer {
 
       val httpApp = RouletteRoutes.routes[F](rouletteService).orNotFound
 
-      // TODO: one for
       BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(port, host)
         .withHttpApp(httpApp)
