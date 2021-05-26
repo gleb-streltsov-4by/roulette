@@ -64,6 +64,7 @@ libraryDependencies ++= Seq(
   "org.slf4j"                 % "slf4j-nop"                     % "1.6.4",
   "eu.timepit"               %% "refined"                       % "0.9.21",
   "com.beachape"             %% "enumeratum"                    % enumeratumVersion,
+  "com.beachape"             %% "enumeratum-circe"              % enumeratumVersion,
   "io.scalaland"             %% "chimney"                       % dtoMapperChimneyVersion,
   "com.github.pureconfig"    %% "pureconfig"                    % "0.14.0",
   "org.flywaydb"              % "flyway-core"                   % "6.2.4",

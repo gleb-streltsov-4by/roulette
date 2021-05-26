@@ -16,16 +16,16 @@ VALUES
 (5, 'player5', 950),
 (6, 'player6', 300);
 
-INSERT INTO player_game_session(id, player_id, game_id, is_host, bet_amount, bet_type, bet_details, session_status, result_number)
+INSERT INTO player_game_session(id, player_id, game_id, is_host, bet_amount, bet_type, bet_details, session_status)
 VALUES
-(1, 1, 2, 'TRUE', 100, 'STRAIGHT_UP', '1', 'ACTIVE', NULL),
-(2, 2, 2, 'FALSE',  50, 'SPLIT', '11,14', 'ACTIVE', NULL),
-(3, 3, 2, 'FALSE', 50, 'STREET', '19-21', 'ACTIVE', NULL),
+(1, 1, 2, 'TRUE', 100, 'STRAIGHT_UP', '1', 'ACTIVE'),
+(2, 2, 2, 'FALSE',  50, 'SPLIT', '11,14', 'ACTIVE'),
+(3, 3, 2, 'FALSE', 50, 'STREET', '19-21', 'ACTIVE'),
 
-(4, 4, 3, 'TRUE', 400, 'CORNER', '25,26,28,29', 'ACTIVE', NULL),
-(5, 5, 3, 'FALSE', 400, 'RED_OR_BLACK', 'R', 'ACTIVE', NULL),
+(4, 4, 3, 'TRUE', 400, 'CORNER', '25,26,28,29', 'ACTIVE'),
+(5, 5, 3, 'FALSE', 400, 'RED_OR_BLACK', 'R', 'ACTIVE'),
 
-(6, 2, 6, 'TRUE', 1000, 'STRAIGHT_UP', '1', 'INACTIVE', 1),
-(7, 3, 6, 'FALSE', 1000, 'COLUMN', '2', 'INACTIVE', 1),
-(8, 4, 6, 'FALSE', 1000, 'DOZEN', '25-36', 'INACTIVE', 1),
-(9, 1, 6, 'FALSE', 1000, 'EVEN_OR_ODD', 'E', 'INACTIVE', 1);
+(6, 2, 6, 'TRUE', 1000, 'STRAIGHT_UP', '1', 'INACTIVE'),
+(7, 3, 6, 'FALSE', 1000, 'COLUMN', '2', 'INACTIVE'),
+(8, 4, 6, 'FALSE', 1000, 'DOZEN', '25-36', 'INACTIVE'),
+(9, 1, 6, 'FALSE', 1000, 'EVEN_OR_ODD', 'E', 'INACTIVE');

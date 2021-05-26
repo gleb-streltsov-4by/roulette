@@ -1,6 +1,6 @@
 package com.roulette.server.domain
 
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
 object game {
 
@@ -14,7 +14,7 @@ object game {
   )
 
   sealed trait GameStatus extends EnumEntry
-  object GameStatus extends Enum[GameStatus] {
+  object GameStatus extends Enum[GameStatus] with CirceEnum[GameStatus] {
 
     val values: IndexedSeq[GameStatus] = findValues
 
@@ -23,14 +23,6 @@ object game {
     final case object InProgress extends GameStatus
     final case object Suspended extends GameStatus
     final case object Archived extends GameStatus
-
-    def of(status: String): Either[String, GameStatus] = {
-      GameStatus
-        .withNameInsensitiveOption(status)
-        .toRight(
-          s"Game status `$status` is invalid... Available are: ${GameStatus.values}"
-        )
-    }
   }
 
   final case class PlayerGameSession(
@@ -42,81 +34,80 @@ object game {
     betType:       BetType,
     betDetails:    List[RouletteNumber],
     sessionStatus: PlayerGameSessionStatus,
-    resultNumber:  Option[RouletteNumber]
   )
 
   sealed trait PlayerGameSessionStatus extends EnumEntry
-  object PlayerGameSessionStatus extends Enum[PlayerGameSessionStatus] {
+  object PlayerGameSessionStatus extends Enum[PlayerGameSessionStatus] with CirceEnum[PlayerGameSessionStatus] {
 
     val values: IndexedSeq[PlayerGameSessionStatus] = findValues
 
     final case object ACTIVE extends PlayerGameSessionStatus
     final case object INACTIVE extends PlayerGameSessionStatus
-
-    def of(status: String): Either[String, PlayerGameSessionStatus] = {
-      PlayerGameSessionStatus
-        .withNameInsensitiveOption(status)
-        .toRight(s"Game session status `$status` is invalid... Available are: ${PlayerGameSessionStatus.values}")
-    }
   }
 
   sealed trait RouletteNumberColor extends EnumEntry
-  object RouletteNumberColor extends Enum[RouletteNumberColor] {
+  object RouletteNumberColor extends Enum[RouletteNumberColor] with CirceEnum[RouletteNumberColor] {
 
     val values: IndexedSeq[RouletteNumberColor] = findValues
 
     final case object Red extends RouletteNumberColor
     final case object Black extends RouletteNumberColor
-
-    def of(color: String): Either[String, RouletteNumberColor] = {
-      val option = RouletteNumberColor.withNameInsensitiveOption(color)
-
-      Either.cond(
-        option.isDefined,
-        option.get,
-        s"Color `$color` is invalid... Available colors are: ${RouletteNumberColor.values}"
-      )
-    }
   }
 
-  sealed abstract case class RouletteNumber private (
-    value: Int,
-    color: RouletteNumberColor
-  )
+  final case class RouletteNumber(value: Int)
   object RouletteNumber {
-    private val minValue = 1
-    private val maxValue = 36
-
-    def of(value: Int, color: String): Either[String, RouletteNumber] = {
-      for {
-        validatedValue <- Either.cond(
-          value >= minValue && value <= maxValue,
-          value,
-          s"Value `$value` is out of range [$minValue; $maxValue]"
-        )
-
-        validatedColor <- RouletteNumberColor.of(color)
-      } yield new RouletteNumber(validatedValue, validatedColor) {}
-    }
+    val minNumberValue = 1
+    val maxNumberValue = 36
   }
 
-  sealed trait BetType extends EnumEntry
-  object BetType extends Enum[BetType] {
+  sealed trait BetType extends EnumEntry {
+    def winRate: Int
+  }
+  object BetType extends Enum[BetType] with CirceEnum[BetType] {
     val values: IndexedSeq[BetType] = findValues
 
     // Inside Bets
-    final case object StraightUp extends BetType
-    final case object Split extends BetType
-    final case object Street extends BetType
-    final case object Corner extends BetType
-    final case object Line extends BetType
+    final case object StraightUp extends BetType {
+      override def winRate: Int = 35
+    }
+    final case object Split extends BetType {
+      override def winRate: Int = 17
+    }
+    final case object Street extends BetType {
+      override def winRate: Int = 11
+    }
+    final case object Corner extends BetType {
+      override def winRate: Int = 8
+    }
+    final case object Line extends BetType {
+      override def winRate: Int = 5
+    }
 
     // Outside Bets
-    final case object Column extends BetType
-    final case object Dozen extends BetType
-    final case object RedOrBlack extends BetType
-    final case object EvenOrOdd extends BetType
-    final case object LowOrHigh extends BetType
+    final case object Column extends BetType {
+      override def winRate: Int = 2
+    }
+    final case object Dozen extends BetType {
+      override def winRate: Int = 2
+    }
+    final case object RedOrBlack extends BetType {
+      override def winRate: Int = 1
+    }
+    final case object EvenOrOdd extends BetType {
+      override def winRate: Int = 1
+    }
+    final case object LowOrHigh extends BetType {
+      override def winRate: Int = 1
+    }
   }
 
+  final case class PlayerGameSessionResult(
+    id:           Int,
+    playerId:     Int,
+    sessionId:    Int,
+    resultNumber: RouletteNumber,
+    betType:      BetType,
+    isWin:        Boolean,
+    payoff:       Int,
+  )
 }

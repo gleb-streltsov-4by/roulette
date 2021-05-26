@@ -6,8 +6,8 @@ import cats.implicits._
 import com.roulette.server.core.RouletteEngine
 import com.roulette.server.domain.game.{Game, GameStatus, PlayerGameSession}
 import com.roulette.server.dto.game
-import com.roulette.server.util.DtoMapper._
-import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto}
+import com.roulette.server.util.ModelMapper._
+import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto, PlayerGameSessionResultDto}
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
@@ -31,15 +31,14 @@ class RouletteServiceImpl[F[_]: Sync](
 
   override def startGame(
     gameId: Int
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = {
-    val result: EitherT[F, GameValidationError, List[PlayerGameSessionDto]] =
+  ): F[Either[GameValidationError, List[PlayerGameSessionResultDto]]] = {
+    val result: EitherT[F, GameValidationError, List[PlayerGameSessionResultDto]] =
       for {
         gameSessions <- EitherT(validateGameSessions(gameId))
         number       <- EitherT.liftF(rouletteEngine.generateNumber)
-        results <- EitherT.liftF(
-          rouletteEngine.evaluateBets(number, gameSessions)
-        )
-      } yield results.map(gameSessionDomainToDto)
+
+        results = rouletteEngine.evaluateBets(number, gameSessions)
+      } yield results.map(sessionResultDomainToDto)
 
     result.value
   }
@@ -57,11 +56,7 @@ class RouletteServiceImpl[F[_]: Sync](
             game,
             InvalidGameBets(game)
           )
-
-          status <- GameStatus
-            .of(game.status)
-            .leftMap(_ => InvalidGameStatus(game))
-        } yield gameDtoToDomain(game, status)
+        } yield gameDtoToDomain(game)
       )
 
   override def createGame(

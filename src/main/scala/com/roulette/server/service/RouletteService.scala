@@ -2,7 +2,7 @@ package com.roulette.server.service
 
 import cats.effect.Sync
 import com.roulette.server.core.RouletteEngine
-import com.roulette.server.dto.game.{GameDto, LeftGameDto, PlayerGameSessionDto}
+import com.roulette.server.dto.game.{GameDto, LeftGameDto, PlayerGameSessionDto, PlayerGameSessionResultDto}
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.impl.RouletteServiceImpl
@@ -22,7 +22,7 @@ trait RouletteService[F[_]] {
 
   def startGame(
     gameId: Int
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]]
+  ): F[Either[GameValidationError, List[PlayerGameSessionResultDto]]]
 }
 
 object RouletteService {

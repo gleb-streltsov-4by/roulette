@@ -35,8 +35,20 @@ CREATE TABLE IF NOT EXISTS player_game_session (
     bet_type BET_TYPE NOT NULL,
     bet_details VARCHAR(64) NOT NULL,
     session_status GAME_SESSION_STATUS NOT NULL,
-    result_number SMALLINT,
     PRIMARY KEY (id),
     CONSTRAINT player_fk FOREIGN KEY (player_id) REFERENCES player(id),
     CONSTRAINT game_fk FOREIGN KEY (game_id) REFERENCES game(id)
+);
+
+CREATE TABLE IF NOT EXISTS player_game_session (
+    id SERIAL,
+    player_id BIGINT NOT NULL,
+    session_id BIGINT NOT NULL,
+    result_number SMALLINT NOT NULL,
+    bet_type BET_TYPE NOT NULL,
+    is_win BOOLEAN NOT NULL,
+    payoff INT NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT player_fk FOREIGN KEY (player_id) REFERENCES player(id),
+    CONSTRAINT session_fk FOREIGN KEY (session_id) REFERENCES player_game_session(id)
 );
