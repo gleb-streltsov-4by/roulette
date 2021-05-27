@@ -16,7 +16,7 @@ object game {
   )
 
   @JsonCodec
-  final case class LeftGameDto(gameId: Int, playerId: Int)
+  final case class GameSessionChangeDto(gameId: Int, playerId: Int)
 
   @JsonCodec
   final case class PlayerGameSessionDto(

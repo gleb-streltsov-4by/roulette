@@ -74,7 +74,8 @@ libraryDependencies ++= Seq(
   "io.circe"                 %% "circe-generic"                 % circeVersion,
   "io.circe"                 %% "circe-generic-extras"          % circeVersion,
   "io.circe"                 %% "circe-optics"                  % circeVersion,
-  "io.circe"                 %% "circe-parser"                  % circeVersion
+  "io.circe"                 %% "circe-parser"                  % circeVersion,
+  "ru.tinkoff"               %% "tofu"                          % "0.9.2"
 )
 
 addCompilerPlugin(

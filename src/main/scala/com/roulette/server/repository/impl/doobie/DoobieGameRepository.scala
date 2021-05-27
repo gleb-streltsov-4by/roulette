@@ -15,6 +15,7 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit ev: Bracket[F
   private val createGame: Fragment = fr"INSERT INTO game(" ++
     fr"name, min_bet_amount, max_bet_amount, max_player_count, status)"
 
+  private val selectGameSession: Fragment = fr"SELECT * player_game_session"
   private val removeGameSession: Fragment = fr"DELETE player_game_session"
   private val createGameSession: Fragment = fr"INSERT INTO player_game_session(" ++
     fr"player_id, game_id, is_host, bet_amount, bet_type, bet_details, session_status)"
@@ -44,6 +45,12 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit ev: Bracket[F
     (createGame ++ fr"VALUES(" ++
       fr"${game.name}, ${game.minBetAmount}, ${game.maxBetAmount}, " ++
       fr"${game.maxPlayerCount}, ${game.status})").update.withUniqueGeneratedKeys[Int]("id").transact(tx)
+
+  override def findGameSessionsByGameId(gameId: Int): F[List[PlayerGameSession]] =
+    (selectGameSession ++ fr"WHERE gameId = $gameId, session_status = 'ACTIVE'")
+      .query[PlayerGameSession]
+      .to[List]
+      .transact(tx)
 
   override def createGameSession(session: PlayerGameSession): F[Int] =
     (createGameSession ++ fr"VALUES(" ++

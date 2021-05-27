@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS player_game_session (
     CONSTRAINT game_fk FOREIGN KEY (game_id) REFERENCES game(id)
 );
 
-CREATE TABLE IF NOT EXISTS player_game_session (
+CREATE TABLE IF NOT EXISTS player_game_session_result (
     id SERIAL,
     player_id BIGINT NOT NULL,
     session_id BIGINT NOT NULL,

@@ -11,6 +11,8 @@ trait GameRepository[F[_]] {
   def updateGame(game: Game): F[Int]
   def createGame(game: Game): F[Int]
 
+  def findGameSessionsByGameId(gameId: Int): F[List[PlayerGameSession]]
+
   def createGameSession(session: PlayerGameSession): F[Int]
   def removeGameSession(gameId:  Int, playerId: Int): F[Int]
 }
