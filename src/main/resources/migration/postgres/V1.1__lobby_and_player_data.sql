@@ -20,12 +20,12 @@ INSERT INTO player_game_session(id, player_id, game_id, is_host, bet_amount, bet
 VALUES
 (1, 1, 2, 'TRUE', 100, 'STRAIGHT_UP', '1', 'ACTIVE'),
 (2, 2, 2, 'FALSE',  50, 'SPLIT', '11,14', 'ACTIVE'),
-(3, 3, 2, 'FALSE', 50, 'STREET', '19-21', 'ACTIVE'),
+(3, 3, 2, 'FALSE', 50, 'STREET', '19,20,21', 'ACTIVE'),
 
 (4, 4, 3, 'TRUE', 400, 'CORNER', '25,26,28,29', 'ACTIVE'),
-(5, 5, 3, 'FALSE', 400, 'RED_OR_BLACK', 'R', 'ACTIVE'),
+(5, 5, 3, 'FALSE', 400, 'RED_OR_BLACK', '1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36', 'ACTIVE'),
 
 (6, 2, 6, 'TRUE', 1000, 'STRAIGHT_UP', '1', 'INACTIVE'),
 (7, 3, 6, 'FALSE', 1000, 'COLUMN', '2', 'INACTIVE'),
-(8, 4, 6, 'FALSE', 1000, 'DOZEN', '25-36', 'INACTIVE'),
-(9, 1, 6, 'FALSE', 1000, 'EVEN_OR_ODD', 'E', 'INACTIVE');
+(8, 4, 6, 'FALSE', 1000, 'DOZEN', '25,26,27,28,29,30,31,32,33,34,35,36', 'INACTIVE'),
+(9, 1, 6, 'FALSE', 1000, 'EVEN_OR_ODD', '2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36', 'INACTIVE');

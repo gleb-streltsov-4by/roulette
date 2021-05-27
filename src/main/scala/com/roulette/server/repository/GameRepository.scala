@@ -8,11 +8,11 @@ import doobie.Transactor
 trait GameRepository[F[_]] {
   def findById(gameId: Int): F[Option[Game]]
   def findAvailableGames: F[List[Game]]
-  def updateGame(game: Game): F[Game]
-  def createGame(game: Game): F[Game]
+  def updateGame(game: Game): F[Int]
+  def createGame(game: Game): F[Int]
 
-  def addUserToGame(session:     PlayerGameSession): F[PlayerGameSession]
-  def removeUserFromGame(gameId: Int, playerId: Int): F[Int]
+  def createGameSession(session: PlayerGameSession): F[Int]
+  def removeGameSession(gameId:  Int, playerId: Int): F[Int]
 }
 
 object GameRepository {

@@ -1,6 +1,6 @@
 package com.roulette.server.repository.impl.doobie.meta
 
-import com.roulette.server.domain.game.GameStatus
+import com.roulette.server.domain.game.{BetType, GameStatus, PlayerGameSessionStatus, RouletteNumber}
 import com.roulette.server.util.CaseConversionUtil.{camelToSnake, snakeToCamel}
 import doobie.Meta
 
@@ -8,13 +8,29 @@ object implicits {
 
   implicit val gameStatusMeta: Meta[GameStatus] =
     Meta[String]
-      .timap(s => GameStatus.withNameInsensitive(snakeToCamel(s.toLowerCase)))(g => {
-        val str            = g.toString
-        val firstChar      = str.charAt(0).toLower
-        val remainingChars = str.substring(1)
+      .timap(s => GameStatus.withNameInsensitive(snakeToCamel(s.toLowerCase)))(g => normalizedSnakeCase(g.toString))
 
-        val pureCamelCase = s"$firstChar$remainingChars"
+  implicit val betTypeMeta: Meta[BetType] =
+    Meta[String]
+      .timap(s => BetType.withNameInsensitive(snakeToCamel(s.toLowerCase)))(g => normalizedSnakeCase(g.toString))
 
-        camelToSnake(pureCamelCase).toUpperCase
-      })
+  implicit val betDetailsMeta: Meta[List[RouletteNumber]] =
+    Meta[String]
+      .timap(s => s.split(",").toList.map(s => RouletteNumber(s.toInt)))(numbers =>
+        numbers.map(_.value.toString).mkString(",")
+      )
+
+  implicit val gameSessionMeta: Meta[PlayerGameSessionStatus] =
+    Meta[String]
+      .timap(s => PlayerGameSessionStatus.withNameInsensitive(snakeToCamel(s.toLowerCase)))(g =>
+        normalizedSnakeCase(g.toString)
+      )
+
+  private def normalizedSnakeCase(str: String): String = {
+    val firstChar      = str.charAt(0).toLower
+    val remainingChars = str.substring(1)
+    val pureCamelCase  = s"$firstChar$remainingChars"
+
+    camelToSnake(pureCamelCase).toUpperCase
+  }
 }
