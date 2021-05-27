@@ -1,21 +1,21 @@
 package com.roulette.server.repository.impl.doobie
 
-import cats.effect.{Bracket, Sync}
+import cats.Functor
+import cats.effect.Bracket
 import doobie.implicits._
 import doobie.{Fragment, Transactor}
 import com.roulette.server.domain.game.{Game, PlayerGameSession}
 import com.roulette.server.repository.GameRepository
 import meta.implicits._
 
-class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit ev: Bracket[F, Throwable])
-  extends GameRepository[F] {
+class DoobieGameRepository[F[_]: Functor: Bracket[*[_], Throwable]](tx: Transactor[F]) extends GameRepository[F] {
 
   private val selectGame: Fragment = fr"SELECT * FROM game"
   private val updateGame: Fragment = fr"UPDATE game"
   private val createGame: Fragment = fr"INSERT INTO game(" ++
     fr"name, min_bet_amount, max_bet_amount, max_player_count, status)"
 
-  private val selectGameSession: Fragment = fr"SELECT * player_game_session"
+  private val selectGameSession: Fragment = fr"SELECT * FROM player_game_session"
   private val removeGameSession: Fragment = fr"DELETE player_game_session"
   private val createGameSession: Fragment = fr"INSERT INTO player_game_session(" ++
     fr"player_id, game_id, is_host, bet_amount, bet_type, bet_details, session_status)"
@@ -47,7 +47,7 @@ class DoobieGameRepository[F[_]: Sync](tx: Transactor[F])(implicit ev: Bracket[F
       fr"${game.maxPlayerCount}, ${game.status})").update.withUniqueGeneratedKeys[Int]("id").transact(tx)
 
   override def findGameSessionsByGameId(gameId: Int): F[List[PlayerGameSession]] =
-    (selectGameSession ++ fr"WHERE gameId = $gameId, session_status = 'ACTIVE'")
+    (selectGameSession ++ fr"WHERE game_id = $gameId AND session_status = 'ACTIVE'")
       .query[PlayerGameSession]
       .to[List]
       .transact(tx)

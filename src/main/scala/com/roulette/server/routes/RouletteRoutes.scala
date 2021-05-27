@@ -71,15 +71,15 @@ object RouletteRoutes {
       marshalResponse(res)
     }
 
-    def gameErrorToHttpResponse(error: GameValidationError): F[Response[F]] = {
+    def gameErrorToHttpResponse(error: GameValidationError): F[Response[F]] =
       error match {
-        case e @ GameNotFound(_)        => NotFound(e.message)
-        case e @ GameSessionNotFound(_) => NotFound(e.message)
-        case e @ PlayerNotFound(_)      => NotFound(e.message)
-        case e @ PlayerIsNotHost(_, _)  => Forbidden(e.message)
-        case e @ _                      => BadRequest(e.message)
+        case e: GameNotFound        => NotFound(e.message)
+        case e: GameSessionNotFound => NotFound(e.message)
+        case e: PlayerNotFound      => NotFound(e.message)
+        case e: PlayerIsNotHost     => Forbidden(e.message)
+
+        case e => BadRequest(e.message)
       }
-    }
 
     def marshalResponse[T](
       result: F[Either[GameValidationError, T]]

@@ -22,7 +22,7 @@ object RouletteServer extends IOApp {
       .use(_ => IO.never)
       .as(ExitCode.Success)
 
-  private def serverResource[F[_]: ContextShift: ConcurrentEffect: Sync: Timer]: Resource[F, Server[F]] = for {
+  private def serverResource[F[_]: ContextShift: ConcurrentEffect: Timer]: Resource[F, Server[F]] = for {
     conf <- Resource.eval(parser.decodePathF[F, AppConf]("app"))
     tx   <- transactor[F](conf.db)
 

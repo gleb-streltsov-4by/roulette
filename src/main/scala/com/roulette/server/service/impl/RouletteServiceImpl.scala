@@ -1,7 +1,7 @@
 package com.roulette.server.service.impl
 
+import cats.Monad
 import cats.data.EitherT
-import cats.effect.Sync
 import cats.implicits._
 import com.roulette.server.core.RouletteEngine
 import com.roulette.server.dto.game
@@ -12,7 +12,7 @@ import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.error.game.GameValidationError._
 
-class RouletteServiceImpl[F[_]: Sync](
+class RouletteServiceImpl[F[_]: Monad](
   gameRepository: GameRepository[F],
   rouletteEngine: RouletteEngine[F]
 ) extends RouletteService[F] {
@@ -37,8 +37,7 @@ class RouletteServiceImpl[F[_]: Sync](
     val result: EitherT[F, GameValidationError, GameDto] = for {
       _     <- EitherT(validateGame(game).pure[F])
       domain = gameDtoToDomain(game)
-
-      id <- EitherT.liftF(gameRepository.createGame(domain))
+      id    <- EitherT.liftF(gameRepository.createGame(domain))
 
       gameWithPk = domain.copy(id = id)
     } yield gameDomainToDto(gameWithPk)
@@ -57,6 +56,10 @@ class RouletteServiceImpl[F[_]: Sync](
     } yield results.map(sessionResultDomainToDto)
   }
 
+  private def validateGame(game: GameDto): Either[GameValidationError, GameDto] = for {
+    _ <- Either.cond(game.minBetAmount < game.maxBetAmount, game, InvalidGameBets(game))
+  } yield game
+
   override def addUserToGame(
     session: PlayerGameSessionDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
@@ -64,8 +67,4 @@ class RouletteServiceImpl[F[_]: Sync](
   override def removeUserFromGame(
     leftGame: game.GameSessionChangeDto
   ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
-
-  private def validateGame(game: GameDto): Either[GameValidationError, GameDto] = for {
-    _ <- Either.cond(game.minBetAmount < game.maxBetAmount, game, InvalidGameBets(game))
-  } yield game
 }
