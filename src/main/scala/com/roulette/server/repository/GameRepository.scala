@@ -1,9 +1,10 @@
 package com.roulette.server.repository
 
 import cats.effect.Sync
+import doobie.Transactor
+
 import com.roulette.server.domain.game.{Game, PlayerGameSession}
 import com.roulette.server.repository.impl.doobie.DoobieGameRepository
-import doobie.Transactor
 
 trait GameRepository[F[_]] {
   def findById(gameId: Int): F[Option[Game]]

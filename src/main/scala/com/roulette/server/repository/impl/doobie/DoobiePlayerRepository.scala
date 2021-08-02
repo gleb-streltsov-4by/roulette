@@ -3,6 +3,7 @@ package com.roulette.server.repository.impl.doobie
 import cats.effect.{Bracket, Sync}
 import doobie.implicits._
 import doobie.{Fragment, Transactor}
+
 import com.roulette.server.domain.player.Player
 import com.roulette.server.repository.PlayerRepository
 

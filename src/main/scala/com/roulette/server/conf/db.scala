@@ -2,11 +2,12 @@ package com.roulette.server.conf
 
 import cats.implicits._
 import cats.effect.{Async, Blocker, ContextShift, Resource, Sync}
-import com.roulette.server.conf.app.DbConf
 import doobie.Transactor
 import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 import org.flywaydb.core.Flyway
+
+import com.roulette.server.conf.app.DbConf
 
 object db {
 

@@ -4,6 +4,7 @@ import cats.Functor
 import cats.effect.Bracket
 import doobie.implicits._
 import doobie.{Fragment, Transactor}
+
 import com.roulette.server.domain.game.{Game, PlayerGameSession}
 import com.roulette.server.repository.GameRepository
 import meta.implicits._

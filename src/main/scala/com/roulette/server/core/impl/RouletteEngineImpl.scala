@@ -1,11 +1,11 @@
 package com.roulette.server.core.impl
 
 import cats.effect.Sync
-import com.roulette.server.core.RouletteEngine
-import com.roulette.server.domain.game.{PlayerGameSession, PlayerGameSessionResult, RouletteNumber}
-
 import scala.util.Random
 import cats.implicits._
+
+import com.roulette.server.core.RouletteEngine
+import com.roulette.server.domain.game.{PlayerGameSession, PlayerGameSessionResult, RouletteNumber}
 import com.roulette.server.domain.game.RouletteNumber.{maxNumberValue, minNumberValue}
 import com.roulette.server.util.ModelMapper
 

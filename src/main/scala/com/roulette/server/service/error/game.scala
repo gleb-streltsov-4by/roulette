@@ -1,12 +1,9 @@
 package com.roulette.server.service.error
 
-import cats.Applicative
+import scala.util.control.NoStackTrace
+
 import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto}
 import com.roulette.server.dto.player.PlayerDto
-import tofu.Raise
-
-import scala.util.Try
-import scala.util.control.NoStackTrace
 
 object game {
 

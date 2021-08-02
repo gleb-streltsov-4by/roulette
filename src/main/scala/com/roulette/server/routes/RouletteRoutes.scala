@@ -2,7 +2,11 @@ package com.roulette.server.routes
 
 import cats.implicits._
 import cats.effect.Sync
-import com.roulette.server.dto.game.{GameDto, GameSessionChangeDto, PlayerGameSessionDto}
+import org.http4s.{EntityEncoder, HttpRoutes, Response}
+import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
+import org.http4s.dsl.Http4sDsl
+
+import com.roulette.server.dto.game.{GameDto, GameSessionChangeDto}
 import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
 import com.roulette.server.service.error.game.GameValidationError.{
@@ -11,9 +15,6 @@ import com.roulette.server.service.error.game.GameValidationError.{
   PlayerIsNotHost,
   PlayerNotFound
 }
-import org.http4s.{EntityEncoder, HttpRoutes, Response}
-import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
-import org.http4s.dsl.Http4sDsl
 
 object RouletteRoutes {
 
@@ -53,24 +54,6 @@ object RouletteRoutes {
       } yield gameResults
     }
 
-    def joinGame: HttpRoutes[F] = HttpRoutes.of[F] { case req @ POST -> Root / "roulette" / "game" / "join" =>
-      val res = for {
-        session      <- req.as[PlayerGameSessionDto]
-        gameSessions <- rouletteService.addUserToGame(session)
-      } yield gameSessions
-
-      marshalResponse(res)
-    }
-
-    def leftGame: HttpRoutes[F] = HttpRoutes.of[F] { case req @ DELETE -> Root / "roulette" / "game" / "left" =>
-      val res = for {
-        change       <- req.as[GameSessionChangeDto]
-        gameSessions <- rouletteService.removeUserFromGame(change)
-      } yield gameSessions
-
-      marshalResponse(res)
-    }
-
     def gameErrorToHttpResponse(error: GameValidationError): F[Response[F]] =
       error match {
         case e: GameNotFound        => NotFound(e.message)
@@ -95,6 +78,6 @@ object RouletteRoutes {
           InternalServerError(ex.getMessage)
         }
 
-    availableGames <+> updateGame() <+> createGame <+> startGame <+> joinGame <+> leftGame
+    availableGames <+> updateGame() <+> createGame <+> startGame
   }
 }

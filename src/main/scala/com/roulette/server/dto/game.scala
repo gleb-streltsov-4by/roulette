@@ -1,7 +1,8 @@
 package com.roulette.server.dto
 
-import com.roulette.server.domain.game.{BetType, GameStatus, PlayerGameSessionStatus}
 import io.circe.generic.JsonCodec
+
+import com.roulette.server.domain.game.{BetType, GameStatus, PlayerGameSessionStatus}
 
 object game {
 

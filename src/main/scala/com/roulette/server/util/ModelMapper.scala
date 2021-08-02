@@ -1,8 +1,9 @@
 package com.roulette.server.util
 
+import io.scalaland.chimney.dsl._
+
 import com.roulette.server.domain.game.{Game, PlayerGameSession, PlayerGameSessionResult, RouletteNumber}
 import com.roulette.server.dto.game.{GameDto, PlayerGameSessionDto, PlayerGameSessionResultDto, RouletteNumberDto}
-import io.scalaland.chimney.dsl._
 
 object ModelMapper {
 

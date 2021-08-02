@@ -3,10 +3,10 @@ package com.roulette.server.service.impl
 import cats.Monad
 import cats.data.EitherT
 import cats.implicits._
+
 import com.roulette.server.core.RouletteEngine
-import com.roulette.server.dto.game
 import com.roulette.server.util.ModelMapper._
-import com.roulette.server.dto.game.{GameDto, GameSessionChangeDto, PlayerGameSessionDto, PlayerGameSessionResultDto}
+import com.roulette.server.dto.game.{GameDto, GameSessionChangeDto, PlayerGameSessionResultDto}
 import com.roulette.server.repository.GameRepository
 import com.roulette.server.service.RouletteService
 import com.roulette.server.service.error.game.GameValidationError
@@ -59,12 +59,4 @@ class RouletteServiceImpl[F[_]: Monad](
   private def validateGame(game: GameDto): Either[GameValidationError, GameDto] = for {
     _ <- Either.cond(game.minBetAmount < game.maxBetAmount, game, InvalidGameBets(game))
   } yield game
-
-  override def addUserToGame(
-    session: PlayerGameSessionDto
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
-
-  override def removeUserFromGame(
-    leftGame: game.GameSessionChangeDto
-  ): F[Either[GameValidationError, List[PlayerGameSessionDto]]] = ???
 }

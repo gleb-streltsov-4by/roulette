@@ -1,8 +1,9 @@
 package com.roulette.server.repository.impl.doobie.meta
 
+import doobie.Meta
+
 import com.roulette.server.domain.game.{BetType, GameStatus, PlayerGameSessionStatus, RouletteNumber}
 import com.roulette.server.util.CaseConversionUtil.{camelToSnake, snakeToCamel}
-import doobie.Meta
 
 object implicits {
 

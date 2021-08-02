@@ -1,6 +1,7 @@
 package com.roulette.server.core
 
 import cats.effect.Sync
+
 import com.roulette.server.core.impl.RouletteEngineImpl
 import com.roulette.server.domain.game.{PlayerGameSession, PlayerGameSessionResult, RouletteNumber}
 
