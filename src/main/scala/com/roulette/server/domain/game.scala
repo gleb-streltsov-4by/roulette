@@ -60,44 +60,40 @@ object game {
     val maxNumberValue = 36
   }
 
-  sealed trait BetType extends EnumEntry {
-    def winRate: Int
-  }
+  sealed trait BetType extends EnumEntry
+
   object BetType extends Enum[BetType] with CirceEnum[BetType] {
     val values: IndexedSeq[BetType] = findValues
 
     // Inside Bets
-    final case object StraightUp extends BetType {
-      override def winRate: Int = 35
-    }
-    final case object Split extends BetType {
-      override def winRate: Int = 17
-    }
-    final case object Street extends BetType {
-      override def winRate: Int = 11
-    }
-    final case object Corner extends BetType {
-      override def winRate: Int = 8
-    }
-    final case object Line extends BetType {
-      override def winRate: Int = 5
-    }
+    final case object StraightUp extends BetType
+    final case object Split extends BetType
+    final case object Street extends BetType
+    final case object Corner extends BetType
+    final case object Line extends BetType
 
     // Outside Bets
-    final case object Column extends BetType {
-      override def winRate: Int = 2
-    }
-    final case object Dozen extends BetType {
-      override def winRate: Int = 2
-    }
-    final case object RedOrBlack extends BetType {
-      override def winRate: Int = 1
-    }
-    final case object EvenOrOdd extends BetType {
-      override def winRate: Int = 1
-    }
-    final case object LowOrHigh extends BetType {
-      override def winRate: Int = 1
+    final case object Column extends BetType
+    final case object Dozen extends BetType
+    final case object RedOrBlack extends BetType
+    final case object EvenOrOdd extends BetType
+    final case object LowOrHigh extends BetType
+  }
+
+  object BetUtils {
+    def winRate(bet: BetType): Int = {
+      bet match {
+        case BetType.StraightUp => 36
+        case BetType.Split      => 18
+        case BetType.Street     => 12
+        case BetType.Corner     => 9
+        case BetType.Line       => 6
+        case BetType.Dozen      => 3
+        case BetType.Column     => 3
+        case BetType.RedOrBlack => 2
+        case BetType.EvenOrOdd  => 2
+        case BetType.LowOrHigh  => 2
+      }
     }
   }
 
